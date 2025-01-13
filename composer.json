@@ -1,0 +1,15 @@
+{
+
+  "require": {
+    "ext-pdo": "*",
+    "ext-mysql_xdevapi": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\Services\\": "app/Services",
+      "App\\Controller\\": "app/Controller",
+      "App\\Models\\": "app/Models",
+      "App\\View\\": "app/View"
+    }
+  }
+}

@@ -2,18 +2,16 @@
 
 namespace App\Services;
 /**
- *Класс RandomValues служит для генерации случайных значений,
+ *Класс FakeUserIdentityService служит для генерации случайных имени или email,
  */
-class RandomValues
+class FakeUserIdentityService
 {
     /**
      * Набор имен
-     * @var string[]
      */
     private array $names;
     /**
      * Набор доменов email
-     * @var string[]
      */
     private array $domains;
 
@@ -35,10 +33,8 @@ class RandomValues
     /**
      *  Проверяет переданный массив пользователя и, если необходимо,
      *  дополняет его случайными значениями для имени и email.
-     * @param $user
-     * @return array
      */
-    public function randomValues($user): array
+    public function randomValues(array $user): array
     {
         if (empty($user['name'])) {
             $user['name'] = $this->randomName();
@@ -61,10 +57,10 @@ class RandomValues
 
     /**
      * Генерирует случайный домен email.
-     * @param $name
+     * @param string $name
      * @return string
      */
-    public function randomEmail($name): string
+    public function randomEmail(string $name): string
     {
         $name = strtolower($name);
         return "$name@{$this->domains[array_rand($this->domains)]}";
