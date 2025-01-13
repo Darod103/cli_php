@@ -1,1 +1,5 @@
 test.php
+/storage/json/
+/storage/mysql
+.idea/
+.env
