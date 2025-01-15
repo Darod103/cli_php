@@ -41,5 +41,5 @@ switch ($command) {
         echo "  php script_name.php add добовляет пользователя можно указать имя и email \n";
         break;
     default:
-        echo 'Нет такой команды';
+        echo "Нет такой команды \n";
 }

@@ -58,10 +58,11 @@ class UsersView
 
     /**
      * Возврощает строку о том что пользователь с такой почто уже существует
+     * @param string $email
      * @return string
      */
-    public function displayUserExists(): string
+    public function displayUserExists(string $email): string
     {
-        return "Пользователь с такой почтой существует" . PHP_EOL;
+        return "Пользователь с почтой {$email} существует " . PHP_EOL;
     }
 }

@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Models;
 
 use App\Services\DbConnectionService;
 use PDO;
-
 /**
  * Class UsersSqlModel
  *
@@ -13,16 +13,14 @@ use PDO;
  *
  * @package App\Models
  */
-class UsersSqlModel
+class UsersSqlModel implements UsersModelInterface
 {
     /**
      * Сервис для установки соединеня с базой данныйх.
-     * @var DbConnectionService
      */
     private DbConnectionService $dbConnection;
     /**
      * Экземпляр PDO для выполнения запросов к базе данных.
-     * @var PDO
      */
     private PDO $pdo;
 
@@ -53,13 +51,14 @@ class UsersSqlModel
      * Получает пользователя по его email.
      *
      * @param string $email Email пользователя, которого нужно найти.
-     * @return array|bool Ассоциативный массив с данными пользователя или false, если пользователь не найден.
+     * @return array Ассоциативный массив с данными пользователя или пустой массив если пользователь не найден.
      */
-    public function getUserByEmail(string $email): array|bool
+    public function getUserByEmail(string $email): array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        return !$user ? [] : $user;
 
     }
 
@@ -84,21 +83,19 @@ class UsersSqlModel
      * Предварительно проверяет, существует ли уже пользователь с таким email.
      *
      * @param array $user Массив с ключами 'name' и 'email', описывающий нового пользователя.
-     * @return array|bool Возвращает массив с данными нового пользователя или false, если такой email уже существует.
+     * @return array Возвращает массив с данными нового пользователя или false, если такой email уже существует.
      */
-    public function addUser(array $user): array|bool
+    public function addUser(array $user): array
     {
         $checkEmail = $this->getUserByEmail($user['email']);
-        if ($checkEmail) {
-            return false;
+        if (!empty($checkEmail)) {
+            return ['email' => $user['email']];
         }
-
         $stmt = $this->pdo->prepare("INSERT INTO users (name, email) VALUES (:name, :email)");
         $stmt->execute([
             "name" => $user['name'],
             "email" => $user['email']
         ]);
-
         return $user;
 
     }

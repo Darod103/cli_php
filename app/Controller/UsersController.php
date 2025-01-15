@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Models\UsersJsonModel;
-use App\Models\UsersSqlModel;
+
+use App\Models\UsersModelInterface;
 use App\View\UsersView;
 use App\Services\FakeUserIdentityService;
 
@@ -16,10 +16,10 @@ use App\Services\FakeUserIdentityService;
 class UsersController
 {
     /**
-     * Модель для работы с данными пользователей (сохранение,удаление,получиние).
+     * Интерфейс для работы с данными пользователей (сохранение,удаление,получиние).
      *
      */
-    private UsersJsonModel|UsersSqlModel $usersModel;
+    private  UsersModelInterface $usersModel;
 
     /**
      * Представление для отображения данных о пользователях.
@@ -31,7 +31,7 @@ class UsersController
      */
     private FakeUserIdentityService $randomValues;
 
-    public function __construct($usersModel)
+    public function __construct(UsersModelInterface $usersModel)
     {
         $this->usersModel = $usersModel;
         $this->usersView = new UsersView();
@@ -58,7 +58,6 @@ class UsersController
      */
     public function delete(int $id): string
     {
-
         $delete = $this->usersModel->deleteById($id);
         if ($delete) {
             return $this->usersView->displayUserDelete($id);
@@ -78,8 +77,8 @@ class UsersController
     {
         $user = $this->randomValues->randomValues($user);
         $user = $this->usersModel->addUser($user);
-        if (!$user) {
-            return $this->usersView->displayUserExists();
+        if (count($user) <= 1) {
+            return $this->usersView->displayUserExists($user['email']);
         }
         return $this->usersView->displayUserAdd($user);
     }

@@ -9,7 +9,7 @@ namespace App\Models;
  * - удаления пользователя по идентификатору,
  * - добавления нового пользователя.
  */
-class UsersJsonModel
+class UsersJsonModel implements UsersModelInterface
 {
     /**
      * Путь к файлу JSON
@@ -20,20 +20,17 @@ class UsersJsonModel
     {
         $this->filePath = __DIR__ . "/../../storage/json/users.json";
         $this->ensureFileExists();
-
-
     }
 
     /**
      * Проверяет существует ли JSON фаил, если нет то создает его
      * @return void
      */
-    public function ensureFileExists(): void
+    private function ensureFileExists(): void
     {
         if (!file_exists($this->filePath)) {
             file_put_contents($this->filePath, json_encode([], JSON_PRETTY_PRINT));
         }
-
     }
 
     /**
@@ -43,7 +40,6 @@ class UsersJsonModel
     public function getAll(): array
     {
         return json_decode(file_get_contents($this->filePath), true) ?: [];
-
     }
 
     /**
@@ -51,7 +47,7 @@ class UsersJsonModel
      * @param string $email
      * @return array
      */
-    public function getUseByEmail(string $email): array
+    public function getUserByEmail(string $email): array
     {
         $users = $this->getAll();
         return array_filter($users, fn($user) => $user['email'] === $email);
@@ -64,7 +60,6 @@ class UsersJsonModel
      */
     public function saveUser(array $user): void
     {
-
         file_put_contents($this->filePath, json_encode($user, JSON_PRETTY_PRINT));
     }
 
@@ -75,7 +70,6 @@ class UsersJsonModel
      */
     public function deleteById(int $id): bool
     {
-
         $users = $this->getAll();
         $newData = array_values(array_filter($users, fn($item) => $item['id'] !== $id));
 
@@ -85,20 +79,18 @@ class UsersJsonModel
 
         $this->saveUser($newData);
         return true;
-
-
     }
 
     /**
      * Вначале идёт проверка: если пользователь с таким адресом электронной почты уже существует, возвращается false.
      * Добавляет нового пользователя в общий массив и сохраняет в JSON-файл.
      * @param array $user
-     * @return array|bool
+     * @return array
      */
-    public function addUser(array $user): array|bool
+    public function addUser(array $user): array
     {
-        if (!empty($this->getUseByEmail($user['email']))) {
-            return false;
+        if (!empty($this->getUserByEmail($user['email']))) {
+            return ['email' => $user['email']];
         }
 
         $allUsers = $this->getAll();
@@ -112,7 +104,6 @@ class UsersJsonModel
         $this->saveUser($allUsers);
 
         return $user;
-
     }
 
 
