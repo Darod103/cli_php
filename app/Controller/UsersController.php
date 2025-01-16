@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\Models\UsersModel;
+
+use App\Models\UsersModelInterface;
 use App\View\UsersView;
-use App\Services\RandomValues;
+use App\Services\FakeUserIdentityService;
 
 /**
  * Класс UsersController управляет пользователями:
@@ -15,37 +16,26 @@ use App\Services\RandomValues;
 class UsersController
 {
     /**
-     * Модель для работы с данными пользователей.
+     * Интерфейс для работы с данными пользователей (сохранение,удаление,получиние).
      *
-     * @var UsersModel
      */
-    private UsersModel $usersModel;
+    private  UsersModelInterface $usersModel;
 
     /**
      * Представление для отображения данных о пользователях.
-     *
-     * @var UsersView
      */
     private UsersView $usersView;
 
     /**
-     * Сервис для генерации и подстановки случайных значений.
-     *
-     * @var RandomValues
+     * Сервис для генерации и подстановки случайного имени или пороля.
      */
-    private RandomValues $randomValues;
+    private FakeUserIdentityService $randomValues;
 
-    /**
-     * Конструктор, инициализирует необходимые объекты:
-     * - модель пользователей,
-     * - представление для вывода информации,
-     * - сервис для случайных значений.
-     */
-    public function __construct()
+    public function __construct(UsersModelInterface $usersModel)
     {
-        $this->usersModel = new UsersModel();
+        $this->usersModel = $usersModel;
         $this->usersView = new UsersView();
-        $this->randomValues = new RandomValues();
+        $this->randomValues = new FakeUserIdentityService();
     }
 
     /**
@@ -66,7 +56,7 @@ class UsersController
      * @param mixed $id Идентификатор пользователя для удаления
      * @return string Возвращает сообщение о результате удаления
      */
-    public function delete(mixed $id): string
+    public function delete(int $id): string
     {
         $delete = $this->usersModel->deleteById($id);
         if ($delete) {
@@ -87,6 +77,9 @@ class UsersController
     {
         $user = $this->randomValues->randomValues($user);
         $user = $this->usersModel->addUser($user);
+        if (count($user) <= 1) {
+            return $this->usersView->displayUserExists($user['email']);
+        }
         return $this->usersView->displayUserAdd($user);
     }
 }
