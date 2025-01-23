@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-
 use App\Models\UsersModelInterface;
-use App\View\UsersView;
 use App\Services\FakeUserIdentityService;
 
 /**
@@ -13,19 +11,13 @@ use App\Services\FakeUserIdentityService;
  * - добавляет нового пользователя,
  * - удаляет пользователя по его идентификатору.
  */
-class UsersController
+class UserControllerApi
 {
     /**
      * Интерфейс для работы с данными пользователей (сохранение,удаление,получиние).
      *
      */
-    private  UsersModelInterface $usersModel;
-
-    /**
-     * Представление для отображения данных о пользователях.
-     */
-    private UsersView $usersView;
-
+    private UsersModelInterface $usersModel;
     /**
      * Сервис для генерации и подстановки случайного имени или пороля.
      */
@@ -34,52 +26,57 @@ class UsersController
     public function __construct(UsersModelInterface $usersModel)
     {
         $this->usersModel = $usersModel;
-        $this->usersView = new UsersView();
         $this->randomValues = new FakeUserIdentityService();
     }
 
     /**
      * Получает список всех пользователей и передаёт их
-     * в представление для отображения.
+     * в формате JSON.
      *
      * @return void
      */
     public function list(): void
     {
         $users = $this->usersModel->getAll();
-        $this->usersView->showAllUsers($users);
+        echo json_encode($users, JSON_PRETTY_PRINT);
     }
 
     /**
      * Удаляет пользователя по его идентификатору.
      *
      * @param mixed $id Идентификатор пользователя для удаления
-     * @return string Возвращает сообщение о результате удаления
      */
-    public function delete(int $id): string
+    public function delete(int $id): void
     {
-        $delete = $this->usersModel->deleteById($id);
-        if ($delete) {
-            return $this->usersView->displayUserDelete($id);
-        } else {
-            return $this->usersView->displayUserNotFound($id);
+        $result = $this->usersModel->deleteById($id);
+        if ($result) {
+            http_response_code(200);
+            echo json_encode(['success' => true]);
+            return;
         }
+        http_response_code(404);
+        echo json_encode(['error' => 'Пользователь не найден']);
     }
-
     /**
      * Добавляет нового пользователя.
      * При необходимости к переданным данным добавляются случайные значения.
-     *
-     * @param array $user Массив с данными о пользователе
-     * @return string Возвращает сообщение о результате добавления пользователя
      */
-    public function add(array $user = []): string
+    public function add(): void
     {
-        $user = $this->randomValues->randomValues($user);
+        $inputData = json_decode(file_get_contents('php://input'), true);
+        $inputData = is_null($inputData) ? [] : $inputData;
+        //Фильтруем массив оставляя только ключ и значение name,email
+        $userData = array_intersect_key($inputData, array_flip(['name', 'email']));
+
+        $user = $this->randomValues->randomValues($userData);
         $user = $this->usersModel->addUser($user);
         if (count($user) <= 1) {
-            return $this->usersView->displayUserExists($user['email']);
+            http_response_code(409);
+            echo json_encode(['error' => 'Email уже занят']);
+            return;
         }
-        return $this->usersView->displayUserAdd($user);
+        http_response_code(200);
+        echo json_encode(['success' => true]);
+
     }
 }

@@ -1,5 +1,6 @@
 <?php
-
+//TODO настроить что бы была возможность запускать локально и через nginx
+//Передаем свойство в конструктор которое равно тру или фел и потом через итерацию выбераем локал или докер
 namespace App\Services;
 
 use PDO;
@@ -19,6 +20,10 @@ class DbConnectionService
      * Порт для подключения к базе данных.
      */
     private string $port;
+    /**
+     * Хост для подключение к БД.
+     */
+    private string $host;
     /**
      * Название базы данных.
      */
@@ -40,15 +45,21 @@ class DbConnectionService
     private EnvService $envService;
 
     /**
+     * Флаг, указывающий работает ли приложение в Docker.
+     */
+    private bool $isDocker;
+    /**
      * Конструктор класса DbConnectionService.
      * Инициализирует переменные окружения для подключения к MySQL.
      */
     public function __construct()
     {
         $this->envService = new EnvService();
-        $this->port = $this->envService->getByKey('MYSQL_PORT');
+        $this->isDocker =$this->envService->getByKey('APP_ENV') === 'docker';
+        $this->port = $this->isDocker? '3306' : $this->envService->getByKey('MYSQL_PORT');
         $this->password = $this->envService->getByKey('MYSQL_PASSWORD');
         $this->database = $this->envService->getByKey('DATABASE');
+        $this->host = $this->isDocker ? 'mysql': '127.0.0.1';
 
     }
 
@@ -62,7 +73,7 @@ class DbConnectionService
             return;
         }
 
-        $dsn = "mysql:host=127.0.0.1;dbname=$this->database;port=$this->port";
+        $dsn = "mysql:host=$this->host;dbname=$this->database;port=$this->port";
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
