@@ -20,23 +20,23 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
     public static $prefixDirsPsr4 = array (
         'App\\View\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app/View',
+            0 => __DIR__ . '/../..' . '/src/View',
         ),
         'App\\Services\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app/Services',
+            0 => __DIR__ . '/../..' . '/src/Services',
         ),
         'App\\Router\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app/Router',
+            0 => __DIR__ . '/../..' . '/src/Router',
         ),
         'App\\Models\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app/Models',
+            0 => __DIR__ . '/../..' . '/src/Models',
         ),
         'App\\Controller\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/app/Controller',
+            0 => __DIR__ . '/../..' . '/src/Controller',
         ),
     );
 
