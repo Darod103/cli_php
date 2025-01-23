@@ -1,4 +1,15 @@
 services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: config/nginx/Dockerfile
+    volumes:
+      - ./:/var/www/
+    ports:
+      - "8080:80"
+    networks:
+      - cli-network
+
   mysql:
     build:
        context: .
@@ -10,6 +21,9 @@ services:
       - "${MYSQL_PORT}:3306"
     volumes:
       - ./storage/mysql/:/var/lib/mysql
+    networks:
+      - cli-network
+
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -27,6 +41,12 @@ services:
       context: .
       dockerfile: config/php/Dockerfile
     volumes:
-      - ./:/usr/src/myapp
+      - ./:/var/www
     depends_on:
       - mysql
+    networks:
+      - cli-network
+
+networks:
+  cli-network:
+    driver: bridge

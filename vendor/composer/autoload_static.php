@@ -11,6 +11,7 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
         array (
             'App\\View\\' => 9,
             'App\\Services\\' => 13,
+            'App\\Router\\' => 11,
             'App\\Models\\' => 11,
             'App\\Controller\\' => 15,
         ),
@@ -24,6 +25,10 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
         'App\\Services\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app/Services',
+        ),
+        'App\\Router\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Router',
         ),
         'App\\Models\\' => 
         array (
