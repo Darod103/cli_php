@@ -12,7 +12,8 @@
       "App\\Models\\": "src/Models",
       "App\\View\\": "src/View",
       "App\\Router\\": "src/Router",
-      "Tests\\App\\Controller\\": "tests/App/Controller",
+      "Tests\\": "tests/",
+      "Tests\\Mocks\\": "tests/Mocks",
       "Tests\\App\\Router\\": "tests/App/Router"
     }
   },
