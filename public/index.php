@@ -1,6 +1,7 @@
 <?php
 require_once '../vendor/autoload.php';
 
+
 use App\Services\DatabaseSwitcherService;
 use App\Controller\UserControllerApi;
 use App\Router\Router;

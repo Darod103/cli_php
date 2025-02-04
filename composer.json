@@ -1,8 +1,9 @@
 {
-
   "require": {
-    "ext-pdo": "*",
-    "ext-mysql_xdevapi": "*"
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0"
   },
   "autoload": {
     "psr-4": {
@@ -10,7 +11,13 @@
       "App\\Controller\\": "src/Controller",
       "App\\Models\\": "src/Models",
       "App\\View\\": "src/View",
-      "App\\Router\\": "src/Router"
+      "App\\Router\\": "src/Router",
+      "Tests\\": "tests/",
+      "Tests\\Mocks\\": "tests/Mocks",
+      "Tests\\App\\Router\\": "tests/App/Router"
     }
+  },
+  "scripts": {
+    "test": "phpunit"
   }
 }
